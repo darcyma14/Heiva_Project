@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3, user-scalable=yes">
+        <title>하이바트레이닝 풀업 챌린지</title>
+        <style>
+            form {
+                text-align: center;
+            }
+            
+            input {
+                font-size: 16px;
+                margin-top: 20px;
+            }
+            
+            /*
+            first-child is used to select the first
+            element in another element
+            */
+            p:first-child {
+                width: 200px;
+                text-align: center;
+                margin:auto;
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+
+	<style>
+		div { position:relative; }
+		#cm { position:absolute; }
+		.hc { width340px; left:0; right:0; margin-left:auto; margin-right:auto; } /* 가로 중앙 정렬 */
+		.vc { height:40px; top: 0; bottom:0; margin-top:auto; margin-bottom:auto; } /* 세로 중앙 정렬 */
+
+		input[type="number"]::-webkit-inner-spin-button,
+		input[type="number"]::-webkit-outer-spin-button {
+			-webkit-appearance: inner-spin-button;    
+			opacity: 1;
+		}        
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        .imgbox {
+            display: grid;
+            height: 100%;
+        }
+        .center-fit {
+            max-width: 100%;
+            max-height: 100vh;
+            margin: auto;
+        }
+			
+	</style>
+
+	<div class="imgbox">
+	  <img class="center-fit" src="65f835ae4d78691b88be3a8a.jpeg">  
+	</div>
+
+    <label for="yearSelect" style="font-size: 12px;">&nbsp&nbsp년도 선택:</label>
+    <select id="yearSelect">
+        <option value="">선택하세요</option>
+    </select>
+	<br><br>
+	
+	<input type="text" id="newYear" placeholder="추가할 년도 입력">
+	<button onclick="addYear()">추가</button>
+
+    <script>
+		let years = [];
+	
+        async function loadComboBox() {
+            try {
+                const response = await fetch("load_lines.txt"); // CSV 파일 불러오기
+                const text = await response.text(); // 텍스트로 변환
+                const data = text.split(";").map(item => item.trim()); // 콤마로 나누고 공백 제거
+
+                const select = document.getElementById("yearSelect");
+
+                data.forEach(item => {
+                    let option = document.createElement("option");
+                    option.value = item;
+                    option.textContent = item;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("데이터 로드 실패:", error);
+            }
+        }
+		
+        function updateComboBox() {
+            const select = document.getElementById("yearSelect");
+            select.innerHTML = '<option value="">선택하세요</option>'; // 초기화
+
+            years.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item;
+                option.textContent = item;
+                select.appendChild(option);
+            });
+        }	
+
+        function addYear() {
+            const newYear = document.getElementById("newYear").value.trim();
+            if (newYear && !years.includes(newYear)) {
+                years.push(newYear);
+                updateComboBox();
+                document.getElementById("newYear").value = ""; // 입력 필드 초기화
+            }
+        }		
+		
+
+        window.onload = loadComboBox;
+    </script>
+
+
+
+
+
+  <center>
+      <img src="https://i.imgur.com/30R5zRo.jpg" alt="My Image" height="180" width="180">
+      <p>하이바트레이닝 풀업 챌린지<br>첫번째 풀업 최대개수와 훈련일수를 입력해 주세요 :)<br></p>
+  </center>
+      <center>
+    <div>
+      최대개수: <input type="number" class="input" id="pullup" placeholder="개수" min="5" style="resize:none;width:60px;text-align:right;"> 개<br>
+      훈련일수: <input type="number" class="input" id="day" placeholder="일수"  min="1" style="resize:none;width:60px;text-align:right;"> 일<br><br>
+      </div>   
+        </center>
+    <form>    
+        <input type="submit" id="submit-btn" value='3.2.1....GO'>
+    </form>
+      <br>
+      <br>
+  
+    <p id="text-output1"  class="hc" style="text-align:center;font-weight:bold"></p>
+      <p id="text-output2"  class="hc" style="text-align:center;font-weight:bold;font-size:36px;"></p>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>  
+      $('form').on('submit', function(event) {
+        
+        event.preventDefault();
+        
+        var pullup = $('#pullup').val();
+        var day = $('#day').val();
+        let basePU1 = [5,4,3,2,1];
+        let basePU2 = [5,4,3,2,2];
+        let basePU3 = [5,4,3,3,2];
+        let basePU4 = [5,4,4,3,2];
+        let basePU5 = [5,5,4,3,2];
+        let resPU = [0,0,0,0,0]
+        
+        
+        document.getElementById("text-output1").innerHTML = "";
+        document.getElementById("text-output2").innerHTML = "";
+        
+          if(pullup < 5) 
+          {
+            document.getElementById("text-output1").innerHTML = "실패: 최대개수는 5개 이상 입력해 주세요.";
+          }
+          else
+          {
+              if (day < 1) {
+                  document.getElementById("text-output1").innerHTML = "실패: 훈련일수는 1일 이상 입력해 주세요.";
+              }
+              else
+              {
+
+                  day = parseInt(day) - 1;
+
+                  let newPU = parseInt(pullup) + parseInt(day / 5);
+                  if (newPU >= 10) {
+                      basePU1[0] *= parseInt(newPU / 5); basePU1[1] *= parseInt(newPU / 5); basePU1[2] *= parseInt(newPU / 5); basePU1[3] *= parseInt(newPU / 5); basePU1[4] *= parseInt(newPU / 5);
+                      basePU2[0] *= parseInt(newPU / 5); basePU2[1] *= parseInt(newPU / 5); basePU2[2] *= parseInt(newPU / 5); basePU2[3] *= parseInt(newPU / 5); basePU2[4] *= parseInt(newPU / 5);
+                      basePU3[0] *= parseInt(newPU / 5); basePU3[1] *= parseInt(newPU / 5); basePU3[2] *= parseInt(newPU / 5); basePU3[3] *= parseInt(newPU / 5); basePU3[4] *= parseInt(newPU / 5);
+                      basePU4[0] *= parseInt(newPU / 5); basePU4[1] *= parseInt(newPU / 5); basePU4[2] *= parseInt(newPU / 5); basePU4[3] *= parseInt(newPU / 5); basePU4[4] *= parseInt(newPU / 5);
+                      basePU5[0] *= parseInt(newPU / 5); basePU5[1] *= parseInt(newPU / 5); basePU5[2] *= parseInt(newPU / 5); basePU5[3] *= parseInt(newPU / 5); basePU5[4] *= parseInt(newPU / 5);
+                  }
+
+                  if (parseInt(day) % 5 == 0) {
+                      resPU[0] = basePU1[0] + parseInt(newPU - basePU1[0]);
+                      resPU[1] = basePU1[1] + parseInt(newPU - basePU1[0]);
+                      resPU[2] = basePU1[2] + parseInt(newPU - basePU1[0]);
+                      resPU[3] = basePU1[3] + parseInt(newPU - basePU1[0]);
+                      resPU[4] = basePU1[4] + parseInt(newPU - basePU1[0]);
+                  }
+                  else if (parseInt(day) % 5 == 1) {
+                      resPU[0] = basePU2[0] + parseInt(newPU - basePU1[0]);
+                      resPU[1] = basePU2[1] + parseInt(newPU - basePU1[0]);
+                      resPU[2] = basePU2[2] + parseInt(newPU - basePU1[0]);
+                      resPU[3] = basePU2[3] + parseInt(newPU - basePU1[0]);
+                      resPU[4] = basePU2[4] + parseInt(newPU - basePU1[0]);
+                  }
+                  else if (parseInt(day) % 5 == 2) {
+                      resPU[0] = basePU3[0] + parseInt(newPU - basePU1[0]);
+                      resPU[1] = basePU3[1] + parseInt(newPU - basePU1[0]);
+                      resPU[2] = basePU3[2] + parseInt(newPU - basePU1[0]);
+                      resPU[3] = basePU3[3] + parseInt(newPU - basePU1[0]);
+                      resPU[4] = basePU3[4] + parseInt(newPU - basePU1[0]);
+                  }
+                  else if (parseInt(day) % 5 == 3) {
+                      resPU[0] = basePU4[0] + parseInt(newPU - basePU1[0]);
+                      resPU[1] = basePU4[1] + parseInt(newPU - basePU1[0]);
+                      resPU[2] = basePU4[2] + parseInt(newPU - basePU1[0]);
+                      resPU[3] = basePU4[3] + parseInt(newPU - basePU1[0]);
+                      resPU[4] = basePU4[4] + parseInt(newPU - basePU1[0]);
+                  }
+                  else //if(parseInt(day)%5 == 4)
+                  {
+                      resPU[0] = basePU5[0] + parseInt(newPU - basePU1[0]);
+                      resPU[1] = basePU5[1] + parseInt(newPU - basePU1[0]);
+                      resPU[2] = basePU5[2] + parseInt(newPU - basePU1[0]);
+                      resPU[3] = basePU5[3] + parseInt(newPU - basePU1[0]);
+                      resPU[4] = basePU5[4] + parseInt(newPU - basePU1[0]);
+                  }
+
+                  document.getElementById("text-output1").innerHTML = "다음 풀업개수만큼 수행하세요!<br>화이팅!<br><br>";
+                  document.getElementById("text-output2").innerHTML = resPU[0] + "-" + resPU[1] + "-" + resPU[2] + "-" + resPU[3] + "-" + resPU[4] + "<br><br>";
+              }
+          }
+      });
+      
+    </script>
+    </body>
+</html>
+ <!-- Example created by Michael:
+ https://www.khanacademy.org/profile/michael628 -->
